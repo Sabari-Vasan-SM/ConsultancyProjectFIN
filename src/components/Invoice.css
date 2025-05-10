@@ -1,5 +1,6 @@
 /* Invoice.css */
 
+/* ===== Root Variables ===== */
 :root {
   --primary: #5a2d82;
   --primary-light: #7b48a8;
@@ -14,11 +15,10 @@
   --transition: all 0.3s ease;
 }
 
-/* Base Styles */
+/* ===== Base Container ===== */
 .invoice-container {
   max-width: 800px;
   margin: 30px auto;
-  padding: 0;
   background: var(--white);
   border-radius: 16px;
   box-shadow: var(--shadow);
@@ -26,6 +26,7 @@
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  padding: 0;
 }
 
 .invoice-container.visible {
@@ -33,6 +34,7 @@
   transform: translateY(0);
 }
 
+/* ===== Header ===== */
 .invoice-header {
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: var(--white);
@@ -61,7 +63,7 @@
 
 .invoice-title {
   font-size: 2.2rem;
-  margin: 0 0 1rem 0;
+  margin-bottom: 1rem;
   position: relative;
   display: inline-block;
 }
@@ -86,12 +88,12 @@
 }
 
 .store-detail {
-  margin: 0.3rem 0;
   font-size: 0.9rem;
   opacity: 0.9;
+  margin: 0.3rem 0;
 }
 
-/* Empty Cart */
+/* ===== Empty Cart ===== */
 .empty-cart {
   padding: 3rem 2rem;
   text-align: center;
@@ -114,9 +116,14 @@
   color: var(--gray);
 }
 
-/* Invoice Content */
+/* ===== Invoice Content ===== */
 .invoice-content {
-  padding: 2rem;
+  max-height: 70vh; /* Adjust the height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 1rem; /* Add some padding for better readability */
+  border: 1px solid var(--light-gray); /* Optional: Add a border for better visibility */
+  border-radius: 8px; /* Optional: Add rounded corners */
+  background: var(--light); /* Optional: Add a background color */
   animation: fadeIn 0.6s ease-out;
 }
 
@@ -183,7 +190,7 @@
   font-size: 1.4rem;
 }
 
-/* Action Buttons */
+/* ===== Action Buttons ===== */
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -193,26 +200,25 @@
 }
 
 .action-btn {
-  padding: 0.8rem 1.5rem;
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #5a2d82;
   border: none;
-  border-radius: 50px;
-  font-weight: 600;
+  border-radius: 5px;
   cursor: pointer;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 180px;
+  text-align: center;
+  transition: background-color 0.3s ease;
 }
 
 .action-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background-color: #7b48a8;
 }
 
 .download-btn {
-  background: var(--primary);
-  color: var(--white);
+  background-color: #4caf50;
 }
 
 .save-btn {
@@ -226,8 +232,7 @@
 }
 
 .payment-btn {
-  background: #3399cc;
-  color: var(--white);
+  background-color: #ff9800;
 }
 
 .qr-btn {
@@ -240,7 +245,15 @@
   color: var(--white);
 }
 
-/* QR Section */
+.razorpay-btn {
+  background-color: #3399cc;
+}
+
+.razorpay-btn:hover {
+  background-color: #287aa9;
+}
+
+/* ===== QR Section ===== */
 .qr-section {
   margin-top: 2rem;
   padding: 1.5rem;
@@ -273,7 +286,7 @@
   display: inline-block;
 }
 
-/* SMS Section */
+/* ===== SMS Section ===== */
 .sms-section {
   margin-top: 2rem;
   animation: fadeIn 0.6s ease-out;
@@ -282,6 +295,7 @@
 .sms-input-group {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .sms-input {
@@ -315,7 +329,35 @@
   transform: translateY(-2px);
 }
 
-/* Animations */
+/* ===== Order Success Animation ===== */
+.order-success {
+  text-align: center;
+  margin-top: 2rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.success-icon {
+  font-size: 3rem;
+  color: #4caf50;
+  animation: scaleUp 0.6s ease-out;
+}
+
+.order-success p {
+  font-size: 1.2rem;
+  color: #4caf50;
+  margin-top: 1rem;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* ===== Animations ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -327,27 +369,98 @@
   }
 }
 
-/* Responsive Design */
+/* ===== Popup Container ===== */
+.popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+}
+
+.popup h3 {
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--light-gray);
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  resize: none;
+  height: 80px;
+}
+
+.submit-btn {
+  background: var(--primary);
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.cancel-btn {
+  background: var(--gray);
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ===== Responsive Design ===== */
 @media (max-width: 768px) {
   .invoice-container {
     margin: 15px;
     border-radius: 12px;
   }
-  
+
   .detail-row {
     grid-template-columns: 1.5fr 1fr 0.8fr 1fr;
     font-size: 0.9rem;
     padding: 0.8rem;
   }
-  
+
   .action-buttons {
     flex-direction: column;
   }
-  
+
   .action-btn {
     width: 100%;
   }
-  
+
   .sms-input-group {
     flex-direction: column;
   }
@@ -357,24 +470,24 @@
   .invoice-header {
     padding: 1.5rem;
   }
-  
+
   .invoice-title {
     font-size: 1.8rem;
   }
-  
+
   .store-name {
     font-size: 1.3rem;
   }
-  
+
   .detail-row {
     grid-template-columns: 1.5fr 1fr 0.5fr 1fr;
     font-size: 0.8rem;
   }
-  
+
   .total-row {
     font-size: 1rem;
   }
-  
+
   .total-amount {
     font-size: 1.2rem;
   }

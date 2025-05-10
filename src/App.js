@@ -8,6 +8,7 @@ import Cart from './components/Cart';
 import Invoice from './components/Invoice';
 import Contact from './components/Contact';
 import StockManagement from './components/StockManagement';
+import Orders from './components/Orders';
 import './App.css';
 
 // Create a spacer component to push content below navbar
@@ -32,6 +33,7 @@ function App() {
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/stock" element={<StockManagement />} />
+        <Route path="/orders" element={<Orders />} />
       </Routes>
     </div>
   );

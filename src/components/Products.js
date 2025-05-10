@@ -1,6 +1,12 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { CartContext } from '../context/CartContext';
 import './Products.css';
+import { createClient } from '@supabase/supabase-js';
+
+// Supabase config
+const supabaseUrl = 'https://cslnkpnxwqahipwrjqna.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzbG5rcG54d3FhaGlwd3JqcW5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MzAxNDksImV4cCI6MjA1NTIwNjE0OX0.jqJ9wbyVFx09RvlNXnLZipCzFvjY2RTfcbO4XoiTfU8'; // Replace with your full anon key
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Products = () => {
   const { addToCart } = useContext(CartContext);
@@ -9,56 +15,109 @@ const Products = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [sortOption, setSortOption] = useState('default');
+  const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Product data remains the same
-  const productsList = [
-    // ... (your existing product data)
-    { "id": 1, "name": "Dove Soap", "price": 30, "category": "Soap", "description": "A gentle soap for daily use.", "image": "https://rukminim2.flixcart.com/image/280/280/xif0q/soap/b/q/c/3-375-advanced-sensitive-care-bar-125g-x-3-dove-original-imah4zrympnqvdug.jpeg?q=70" },
-  { "id": 2, "name": "Lux Soap", "price": 25, "category": "Soap", "description": "A luxurious soap for smooth skin.", "image": "https://rukminim2.flixcart.com/image/280/280/xif0q/soap/k/b/z/-original-imah8ckagpagqzhm.jpeg?q=70" },
-  { "id": 3, "name": "Pears Soap", "price": 45, "category": "Soap", "description": "A transparent glycerin soap for soft skin.", "image": "https://m.media-amazon.com/images/I/61PVolPfATL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 4, "name": "Clinic Plus Shampoo", "price": 110, "category": "Shampoo", "description": "A protein-rich shampoo for healthy hair.", "image": "https://rukminim2.flixcart.com/image/280/280/xif0q/shampoo/x/j/8/-original-imagrzrjhcsjkn2h.jpeg?q=70" },
-  { "id": 5, "name": "Dove Shampoo", "price": 180, "category": "Shampoo", "description": "A nourishing shampoo for soft hair.", "image": "https://rukminim2.flixcart.com/image/280/280/xif0q/shampoo/n/u/7/-original-imah7eyznck4chgc.jpeg?q=70" },
-  { "id": 6, "name": "Sunsilk Shampoo", "price": 150, "category": "Shampoo", "description": "A smoothening shampoo for silky hair.", "image": "https://m.media-amazon.com/images/I/51K-LLtOXWL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 7, "name": "Bru Instant Coffee", "price": 160, "category": "Coffee", "description": "A strong instant coffee blend.", "image": "https://m.media-amazon.com/images/I/618UobAPMrL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 8, "name": "Nescafe Classic Coffee", "price": 220, "category": "Coffee", "description": "A rich and aromatic instant coffee.", "image": "https://m.media-amazon.com/images/I/71kSJv+gUIL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 9, "name": "Narasu's Filter Coffee", "price": 180, "category": "Coffee", "description": "A popular South Indian filter coffee.", "image": "https://m.media-amazon.com/images/I/61pGE-5NrgL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 10, "name": "Tata Tea Gold", "price": 130, "category": "Tea", "description": "A strong and flavorful tea.", "image": "https://m.media-amazon.com/images/I/610ELwpmPHL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 11, "name": "Lipton Green Tea", "price": 180, "category": "Tea", "description": "A healthy green tea alternative.", "image": "https://m.media-amazon.com/images/I/51n8lK8MwNL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 12, "name": "Red Label Tea", "price": 110, "category": "Tea", "description": "A widely used strong tea blend.", "image": "https://m.media-amazon.com/images/I/51aO+7bz3dL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 13, "name": "Cadbury Dairy Milk", "price": 50, "category": "Chocolate", "description": "A creamy milk chocolate.", "image": "https://m.media-amazon.com/images/I/61PzgeMkUOL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 14, "name": "Nestle KitKat", "price": 40, "category": "Chocolate", "description": "A crispy wafer chocolate.", "image": "https://m.media-amazon.com/images/I/71t+cwWDQ8L._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 15, "name": "5 Star Chocolate", "price": 35, "category": "Chocolate", "description": "A chewy caramel chocolate.", "image": "https://m.media-amazon.com/images/I/51VxXgzjzWL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 16, "name": "GRB Ghee", "price": 550, "category": "Ghee", "description": "A pure and aromatic ghee.", "image": "https://m.media-amazon.com/images/I/71c3SG1xPHL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 17, "name": "Amul Ghee", "price": 520, "category": "Ghee", "description": "A premium quality ghee.", "image": "https://m.media-amazon.com/images/I/71f0OmdXdfL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 17, "name": "Amul Ghee - 1litre", "price": 510, "category": "Ghee", "description": "A premium quality ghee.", "image": "https://www.bigbasket.com/media/uploads/p/l/40046233_4-amul-amul-ghee-2-l.jpg" },
-  { "id": 18, "name": "Aavin Ghee - 1litre", "price": 700, "category": "Ghee", "description": "A locally preferred dairy ghee.", "image": "https://www.bigbasket.com/media/uploads/p/l/40036727_1-aavin-ghee.jpg" },
-  { "id": 19, "name": "Idhayam Gingelly Oil - 1litre", "price": 378, "category": "Oil", "description": "A popular sesame oil brand in Tamil Nadu.", "image": "https://www.bigbasket.com/media/uploads/p/l/148681_8-idhayam-oil-gingelly.jpg" },
-  { "id": 20, "name": "Gold Winner Sunflower Oil- 1litre", "price": 118, "category": "Oil", "description": "A widely used cooking oil in Tamil Nadu.", "image": "https://m.media-amazon.com/images/I/71uJ0F8-kIL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 21, "name": "Fortune Sunflower Oil - 1litre", "price": 108, "category": "Oil", "description": "A refined and pure sunflower oil.", "image": "https://www.jiomart.com/images/product/original/490000052/fortune-sunlite-refined-sunflower-oil-1-l-product-images-o490000052-p490000052-0-202203150155.jpg?im=Resize=(420,420)" },
-  { "id": 22, "name": "Colgate Toothpaste", "price": 65, "category": "Toothpaste", "description": "A widely used fluoride toothpaste.", "image": "https://m.media-amazon.com/images/I/61XMUdBuJ6L._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 23, "name": "Sensodyne Toothpaste", "price": 102, "category": "Toothpaste", "description": "A toothpaste for sensitive teeth.", "image": "https://m.media-amazon.com/images/I/51hJph2+-wL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 24, "name": "Close-Up Toothpaste", "price": 40, "category": "Toothpaste", "description": "A gel-based toothpaste for fresh breath.", "image": "https://m.media-amazon.com/images/I/51H8t6JIrDL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 25, "name": "Britannia Good Day Biscuits", "price": 32, "category": "Biscuits", "description": "A crunchy and tasty biscuit.", "image": "https://m.media-amazon.com/images/I/61IhdI0oN8L._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 26, "name": "Parle-G Biscuits", "price": 92, "category": "Biscuits", "description": "A classic glucose biscuit.", "image": "https://m.media-amazon.com/images/I/71bufOt9zAL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 27, "name": "Hide & Seek Fab Biscuits", "price": 28, "category": "Biscuits", "description": "A choco-filled biscuit delight.", "image": "https://m.media-amazon.com/images/I/61OZQN4AQ5L._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 28, "name": "Urid Dal - 1kg", "price": 116, "category": "Pulses", "description": "A commonly used dal in South Indian dishes.", "image": "https://m.media-amazon.com/images/I/81TboOByzAL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 29, "name": "Toor Dal - 1kg", "price": 103, "category": "Pulses", "description": "A nutritious lentil used in sambars.", "image":"https://m.media-amazon.com/images/I/91nZuaJTrnL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 30, "name": "Moong Dal - 1kg", "price": 107, "category": "Pulses", "description": "A light and easily digestible dal.", "image": "https://m.media-amazon.com/images/I/91JsALx2o4L._AC_UL480_FMwebp_QL65_.jpg" },
+  // ✅ Fetch products and sanitize data
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .gt('quantity', 0);
 
-  { "id": 31, "name": "Everest Chilli Powder - 100g", "price": 86, "category": "Spices", "description": "A vibrant red chili powder for spicy dishes.", "image": "https://m.media-amazon.com/images/I/61hjaXERodL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 32, "name": "MDH Garam Masala - 100g", "price": 87, "category": "Spices", "description": "A blend of aromatic spices for Indian curries.", "image":"https://m.media-amazon.com/images/I/71F5t572b5L._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 33, "name": "Everest Turmeric Powder - 100g", "price": 46, "category": "Spices", "description": "A pure turmeric powder for healthy cooking.", "image": "https://cdn.shopify.com/s/files/1/0280/4111/7770/products/83.jpg?v=1645226871&width=800" },
-  { "id": 34, "name": "Sakthi Coriander Powder - 100g", "price": 29, "category": "Spices", "description": "A fresh coriander powder for flavorful dishes.", "image": "https://m.media-amazon.com/images/I/91ytRByr3FL._AC_UL480_FMwebp_QL65_.jpg" },
-  { "id": 35, "name": "Everest Cumin Powder - 100g", "price": 57, "category": "Spices", "description": "A strong cumin powder for rich taste.","image":"https://m.media-amazon.com/images/I/81Y4dOt-V1L._AC_UL480_FMwebp_QL65_.jpg" }
-  ];
+        if (error) throw error;
 
-  const filteredProducts = productsList.filter(product => {
-    return (category === 'All' || product.category === category) && 
-           product.name.toLowerCase().includes(search.toLowerCase());
-  });
+        const sanitizedData = data.map(product => ({
+          ...product,
+          price: Number(product.price),
+          quantity: Number(product.quantity),
+        }));
+
+        setProductsList(sanitizedData);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+
+    const channel = supabase
+      .channel('products-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products' },
+        (payload) => {
+          if (payload.eventType === 'UPDATE') {
+            setProductsList(prev =>
+              prev.map(p =>
+                p.id === payload.new.id
+                  ? {
+                      ...payload.new,
+                      price: Number(payload.new.price),
+                      quantity: Number(payload.new.quantity),
+                    }
+                  : p
+              )
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // ✅ Add to cart with numeric values
+  const handleAddToCart = async (product) => {
+    try {
+      if (quantity > product.quantity) {
+        alert(`Only ${product.quantity} items available in stock`);
+        return;
+      }
+
+      const updatedProducts = productsList.map(p =>
+        p.id === product.id ? { ...p, quantity: p.quantity - quantity } : p
+      );
+      setProductsList(updatedProducts);
+
+      const { error: updateError } = await supabase
+        .from('products')
+        .update({ quantity: product.quantity - quantity })
+        .eq('id', product.id);
+
+      if (updateError) throw updateError;
+
+      addToCart({
+        ...product,
+        price: Number(product.price),
+        quantity: Number(quantity),
+      });
+
+      setSelectedProduct(null);
+      setQuantity(1);
+    } catch (err) {
+      console.error('Error updating product quantity:', err);
+      setProductsList(productsList);
+      alert('Failed to update product quantity. Please try again.');
+    }
+  };
+
+  const filteredProducts = productsList.filter(product =>
+    (category === 'All' || product.category === category) &&
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch(sortOption) {
+    switch (sortOption) {
       case 'price-low':
         return a.price - b.price;
       case 'price-high':
@@ -74,11 +133,23 @@ const Products = () => {
 
   const categories = [...new Set(productsList.map(product => product.category))];
 
-  const handleAddToCart = (product) => {
-    addToCart(product, quantity);
-    setSelectedProduct(null);
-    setQuantity(1);
-  };
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading products...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <p>Error loading products: {error}</p>
+        <button onClick={() => window.location.reload()}>Try Again</button>
+      </div>
+    );
+  }
 
   return (
     <div className="products-page">
@@ -100,8 +171,8 @@ const Products = () => {
         </div>
 
         <div className="filter-group">
-          <select 
-            value={category} 
+          <select
+            value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="filter-select"
           >
@@ -113,8 +184,8 @@ const Products = () => {
         </div>
 
         <div className="filter-group">
-          <select 
-            value={sortOption} 
+          <select
+            value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
             className="filter-select"
           >
@@ -129,7 +200,10 @@ const Products = () => {
 
       {sortedProducts.length === 0 ? (
         <div className="no-products">
-          <img src="https://cdn.dribbble.com/users/2382015/screenshots/6065978/no_result.gif" alt="No products found" />
+          <img
+            src="https://cdn.dribbble.com/users/2382015/screenshots/6065978/no_result.gif"
+            alt="No products found"
+          />
           <p>No products match your search criteria</p>
         </div>
       ) : (
@@ -143,16 +217,23 @@ const Products = () => {
                   className="product-image"
                   onClick={() => setSelectedProduct(product)}
                 />
+                {product.quantity <= 5 && (
+                  <span className="low-stock-badge">
+                    {product.quantity === 0 ? 'Out of Stock' : `Only ${product.quantity} left`}
+                  </span>
+                )}
               </div>
               <div className="product-info">
                 <h3 className="product-name">{product.name}</h3>
                 <p className="product-category">{product.category}</p>
                 <p className="product-price">₹{product.price}</p>
-                <button 
+                <p className="product-quantity">Available: {product.quantity}</p>
+                <button
                   className="view-details-btn"
                   onClick={() => setSelectedProduct(product)}
+                  disabled={product.quantity === 0}
                 >
-                  View Details
+                  {product.quantity === 0 ? 'Out of Stock' : 'View Details'}
                 </button>
               </div>
             </div>
@@ -164,48 +245,61 @@ const Products = () => {
         <div className="product-modal">
           <div className="modal-overlay" onClick={() => setSelectedProduct(null)}></div>
           <div className="modal-content">
-            <button 
-              className="close-modal"
-              onClick={() => setSelectedProduct(null)}
-            >
+            <button className="close-modal" onClick={() => setSelectedProduct(null)}>
               &times;
             </button>
-            
+
             <div className="modal-product-image">
               <img src={selectedProduct.image} alt={selectedProduct.name} />
+              {selectedProduct.quantity <= 5 && (
+                <span className="low-stock-badge">
+                  {selectedProduct.quantity === 0 ? 'Out of Stock' : `Only ${selectedProduct.quantity} left`}
+                </span>
+              )}
             </div>
-            
+
             <div className="modal-product-details">
               <h2>{selectedProduct.name}</h2>
               <p className="modal-category">{selectedProduct.category}</p>
               <p className="modal-description">{selectedProduct.description}</p>
-              
+
               <div className="price-container">
                 <span className="modal-price">₹{selectedProduct.price}</span>
+                <span className="modal-quantity">Available: {selectedProduct.quantity}</span>
               </div>
-              
-              <div className="quantity-controls">
-                <button 
-                  className="quantity-btn minus"
-                  onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                >
-                  −
+
+              {selectedProduct.quantity > 0 ? (
+                <>
+                  <div className="quantity-controls">
+                    <button
+                      className="quantity-btn minus"
+                      onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                      disabled={quantity <= 1}
+                    >
+                      −
+                    </button>
+                    <span className="quantity-value">{quantity}</span>
+                    <button
+                      className="quantity-btn plus"
+                      onClick={() => setQuantity(prev => Math.min(selectedProduct.quantity, prev + 1))}
+                      disabled={quantity >= selectedProduct.quantity}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    className="add-to-cart-btn"
+                    onClick={() => handleAddToCart(selectedProduct)}
+                  >
+                    Add to Cart - ₹{(selectedProduct.price * quantity).toFixed(2)}
+                  </button>
+                </>
+              ) : (
+                <button className="out-of-stock-btn" disabled>
+                  Out of Stock
                 </button>
-                <span className="quantity-value">{quantity}</span>
-                <button 
-                  className="quantity-btn plus"
-                  onClick={() => setQuantity(prev => prev + 1)}
-                >
-                  +
-                </button>
-              </div>
-              
-              <button 
-                className="add-to-cart-btn"
-                onClick={() => handleAddToCart(selectedProduct)}
-              >
-                Add to Cart - ₹{(selectedProduct.price * quantity).toFixed(2)}
-              </button>
+              )}
             </div>
           </div>
         </div>

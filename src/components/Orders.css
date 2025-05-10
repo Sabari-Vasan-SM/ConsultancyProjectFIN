@@ -1,0 +1,35 @@
+.orders-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.orders-container h2 {
+  text-align: center;
+  color: #5a2d82;
+  margin-bottom: 20px;
+}
+
+.orders-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.orders-container li {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.orders-container li:last-child {
+  border-bottom: none;
+}
+
+.orders-container p {
+  text-align: center;
+  color: #777;
+}

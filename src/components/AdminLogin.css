@@ -9,6 +9,8 @@
   --light-color: #f8f9fa;
   --error-color: #ff4d4f;
   --success-color: #52c41a;
+  --muted-text-color: #6c757d;
+  --border-color: #ced4da;
 }
 
 * {
@@ -60,7 +62,7 @@
 
 .login-subtitle {
   font-size: 14px;
-  color: #666;
+  color: var(--muted-text-color);
   font-weight: 400;
 }
 
@@ -68,7 +70,7 @@
 .login-toggle {
   position: relative;
   display: flex;
-  background: #f0f0f0;
+  background: var(--light-color);
   border-radius: 30px;
   padding: 4px;
   margin-bottom: 28px;
@@ -80,7 +82,7 @@
   padding: 10px 16px;
   border: none;
   background: transparent;
-  color: #666;
+  color: var(--muted-text-color);
   font-weight: 600;
   cursor: pointer;
   position: relative;
@@ -127,7 +129,7 @@
   width: 100%;
   padding: 16px 16px 16px 0;
   border: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border-color);
   font-size: 16px;
   color: var(--dark-color);
   background: transparent;
@@ -149,7 +151,7 @@
   position: absolute;
   left: 0;
   top: 16px;
-  color: #999;
+  color: var(--muted-text-color);
   font-size: 16px;
   pointer-events: none;
   transition: all 0.3s ease;
@@ -272,8 +274,30 @@
   .login-card {
     padding: 30px 20px;
   }
-  
+
   .login-title {
     font-size: 20px;
   }
+}
+
+/* Button Styling for Redirect */
+.redirect-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+}
+
+.redirect-button:hover {
+  background-color: #45a049;
+}
+
+.redirect-button:focus {
+  outline: none;
 }
