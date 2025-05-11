@@ -12,11 +12,13 @@
     "framer-motion": "^12.5.0",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
+    "jsqr": "^1.4.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
     "twilio": "^5.4.5",
     "web-vitals": "^4.2.4"
   },
