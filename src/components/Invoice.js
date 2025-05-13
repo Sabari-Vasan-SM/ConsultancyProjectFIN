@@ -4,6 +4,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useNavigate } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
+import { motion, AnimatePresence } from 'framer-motion';
 import './Invoice.css';
 
 const supabaseUrl = 'https://cslnkpnxwqahipwrjqna.supabase.co';
@@ -30,6 +31,29 @@ const Invoice = () => {
     const qty = Number(item.quantity) || 1;
     return total + item.price * qty;
   }, 0);
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.3 }
+    }
+  };
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
@@ -94,14 +118,13 @@ const Invoice = () => {
     setShowPopup(false);
 
     try {
-      // Insert order into Supabase
       const { data, error } = await supabase.from('orders').insert([
         {
           name: deliveryDetails.name,
           phone: deliveryDetails.phone,
           address: deliveryDetails.address,
           total_amount: totalAmount,
-          items: JSON.stringify(cart), // store cart as JSON
+          items: JSON.stringify(cart),
           order_date: new Date().toISOString(),
         },
       ]);
@@ -121,24 +144,59 @@ const Invoice = () => {
   };
 
   return (
-    <div className={`invoice-container ${isVisible ? 'visible' : ''}`}>
+    <motion.div 
+      className="invoice-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="invoice-header">
-        <h2 className="invoice-title">Your Invoice</h2>
-        <div className="store-info">
+        <motion.h2 
+          className="invoice-title"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          Your Invoice
+        </motion.h2>
+        <motion.div 
+          className="store-info"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
           <h3 className="store-name">Velavan Super Stores</h3>
           <p className="store-detail">Bhavani main road, Salangapalayam</p>
           <p className="store-detail">Tamil Nadu-638455</p>
           <p className="store-detail">GST No: 22AAXFV7324B1Z0</p>
-        </div>
+        </motion.div>
       </div>
 
       {cart.length === 0 ? (
-        <div className="empty-cart">
+        <motion.div 
+          className="empty-cart"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+        >
           <div className="empty-icon">🛒</div>
           <p>Your cart is empty</p>
-        </div>
+          <motion.button 
+            className="back-to-shop-btn"
+            onClick={() => navigate('/')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Back to Shop
+          </motion.button>
+        </motion.div>
       ) : (
-        <div className="invoice-content">
+        <motion.div 
+          className="invoice-content"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <div className="invoice-details">
             <div className="detail-row header">
               <span>Product</span>
@@ -147,87 +205,164 @@ const Invoice = () => {
               <span>Total</span>
             </div>
 
-            {cart.map((item, index) => {
-              const qty = Number(item.quantity) || 1;
-              return (
-                <div className="detail-row" key={index}>
-                  <span className="product-name">{item.name}</span>
-                  <span>₹{item.price}</span>
-                  <span>{qty}</span>
-                  <span className="item-total">₹{item.price * qty}</span>
-                </div>
-              );
-            })}
+            <AnimatePresence>
+              {cart.map((item, index) => {
+                const qty = Number(item.quantity) || 1;
+                return (
+                  <motion.div 
+                    className="detail-row"
+                    key={`${item.id}-${index}`}
+                    variants={itemVariants}
+                    layout
+                    exit={{ opacity: 0, x: -50 }}
+                  >
+                    <span className="product-name">
+                      {item.image && (
+                        <img 
+                          src={item.image} 
+                          alt={item.name} 
+                          className="product-thumbnail"
+                        />
+                      )}
+                      {item.name}
+                    </span>
+                    <span>₹{item.price}</span>
+                    <span>{qty}</span>
+                    <span className="item-total">₹{item.price * qty}</span>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
 
-            <div className="total-row">
+            <motion.div 
+              className="total-row"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
               <span>Total Amount:</span>
-              <span className="total-amount">₹{totalAmount}</span>
-            </div>
+              <span className="total-amount">₹{totalAmount.toFixed(2)}</span>
+            </motion.div>
           </div>
 
-          <div className="action-buttons">
-            <button className="action-btn download-btn" onClick={handleDownloadPDF}>
+          <motion.div 
+            className="action-buttons"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <motion.button 
+              className="action-btn download-btn"
+              onClick={handleDownloadPDF}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Download Invoice
-            </button>
-            <button className="action-btn razorpay-btn" onClick={handleRazorpayPayment}>
+            </motion.button>
+            <motion.button 
+              className="action-btn razorpay-btn"
+              onClick={handleRazorpayPayment}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Pay with Razorpay
-            </button>
-            <button className="action-btn payment-btn" onClick={handlePlaceOrder}>
+            </motion.button>
+            <motion.button 
+              className="action-btn payment-btn"
+              onClick={handlePlaceOrder}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Place Order
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
 
           {orderPlaced && (
-            <div className="order-success">
+            <motion.div 
+              className="order-success"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <div className="success-icon">✔</div>
               <p>Your order has been placed successfully!</p>
-            </div>
+              <div className="success-loader">
+                <div className="loader-circle"></div>
+              </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
       )}
 
-      {showPopup && (
-        <div className="popup-container">
-          <div className="popup">
-            <h3>Enter Delivery Details</h3>
-            <form onSubmit={handlePopupSubmit}>
-              <div className="form-group">
-                <label>Name</label>
-                <input
-                  type="text"
-                  value={deliveryDetails.name}
-                  onChange={(e) => setDeliveryDetails({ ...deliveryDetails, name: e.target.value })}
-                  required
-                />
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div 
+            className="popup-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="popup-container"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="popup">
+                <h3>Enter Delivery Details</h3>
+                <form onSubmit={handlePopupSubmit}>
+                  <div className="form-group">
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      value={deliveryDetails.name}
+                      onChange={(e) => setDeliveryDetails({ ...deliveryDetails, name: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Phone</label>
+                    <input
+                      type="text"
+                      value={deliveryDetails.phone}
+                      onChange={(e) => setDeliveryDetails({ ...deliveryDetails, phone: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Address</label>
+                    <textarea
+                      value={deliveryDetails.address}
+                      onChange={(e) => setDeliveryDetails({ ...deliveryDetails, address: e.target.value })}
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="popup-buttons">
+                    <motion.button 
+                      type="submit" 
+                      className="submit-btn"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      Submit
+                    </motion.button>
+                    <motion.button 
+                      type="button" 
+                      className="cancel-btn"
+                      onClick={() => setShowPopup(false)}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      Cancel
+                    </motion.button>
+                  </div>
+                </form>
               </div>
-              <div className="form-group">
-                <label>Phone</label>
-                <input
-                  type="text"
-                  value={deliveryDetails.phone}
-                  onChange={(e) => setDeliveryDetails({ ...deliveryDetails, phone: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Address</label>
-                <textarea
-                  value={deliveryDetails.address}
-                  onChange={(e) => setDeliveryDetails({ ...deliveryDetails, address: e.target.value })}
-                  required
-                ></textarea>
-              </div>
-              <button type="submit" className="submit-btn">
-                Submit
-              </button>
-              <button type="button" className="cancel-btn" onClick={() => setShowPopup(false)}>
-                Cancel
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

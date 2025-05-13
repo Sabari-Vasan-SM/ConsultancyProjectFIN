@@ -40,7 +40,7 @@ const AppRoutes = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/invoice" element={<Invoice />} />
+        <Route path="/invoice" element={<Invoice />} /> {/* Invoice route */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/stock" element={<StockManagement />} />
         <Route path="/orders" element={<Orders />} />

@@ -26,7 +26,7 @@ const CustomerLogin = () => {
   };
 
   const handleRedirect = () => {
-    window.location.href = "https://billing-stock-management-system.vercel.app/";
+    window.location.href = "https://billing-and-stock-management-11.vercel.app/";
   };
 
   return (

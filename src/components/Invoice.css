@@ -1,9 +1,8 @@
 /* Invoice.css */
-
-/* ===== Root Variables ===== */
 :root {
   --primary: #5a2d82;
-  --primary-light: #7b48a8;
+  --primary-light: #7d4fa8;
+  --primary-lighter: #f0e6fa;
   --secondary: #ff6b6b;
   --accent: #ffd166;
   --light: #f7f7f7;
@@ -11,30 +10,39 @@
   --gray: #777;
   --light-gray: #e0e0e0;
   --white: #ffffff;
+  --success: #4caf50;
+  --border-radius: 16px;
+  --border-radius-sm: 8px;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
   --transition: all 0.3s ease;
 }
 
-/* ===== Base Container ===== */
-.invoice-container {
-  max-width: 800px;
-  margin: 30px auto;
-  background: var(--white);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
 }
 
-.invoice-container.visible {
-  opacity: 1;
-  transform: translateY(0);
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f9f9f9;
+  color: var(--dark);
+  line-height: 1.6;
 }
 
-/* ===== Header ===== */
+/* Invoice Container */
+.invoice-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Header Section */
 .invoice-header {
   background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: var(--white);
@@ -66,6 +74,7 @@
   margin-bottom: 1rem;
   position: relative;
   display: inline-block;
+  font-weight: 700;
 }
 
 .invoice-title::after {
@@ -85,6 +94,7 @@
 .store-name {
   font-size: 1.5rem;
   margin: 0.5rem 0;
+  font-weight: 600;
 }
 
 .store-detail {
@@ -93,17 +103,21 @@
   margin: 0.3rem 0;
 }
 
-/* ===== Empty Cart ===== */
+/* Empty Cart */
 .empty-cart {
   padding: 3rem 2rem;
   text-align: center;
-  animation: fadeIn 0.6s ease-out;
+  background: var(--white);
+  border-radius: var(--border-radius);
+  margin: 1rem;
+  box-shadow: var(--shadow);
 }
 
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
   animation: bounce 2s infinite;
+  display: inline-block;
 }
 
 @keyframes bounce {
@@ -114,22 +128,33 @@
 .empty-cart p {
   font-size: 1.2rem;
   color: var(--gray);
+  margin-bottom: 1.5rem;
 }
 
-/* ===== Invoice Content ===== */
+.back-to-shop-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 10px rgba(90, 45, 130, 0.2);
+}
+
+.back-to-shop-btn:hover {
+  background: var(--primary-light);
+}
+
+/* Invoice Content */
 .invoice-content {
-  max-height: 70vh; /* Adjust the height as needed */
-  overflow-y: auto; /* Enable vertical scrolling */
-  padding: 1rem; /* Add some padding for better readability */
-  border: 1px solid var(--light-gray); /* Optional: Add a border for better visibility */
-  border-radius: 8px; /* Optional: Add rounded corners */
-  background: var(--light); /* Optional: Add a background color */
-  animation: fadeIn 0.6s ease-out;
+  padding: 1.5rem;
 }
 
 .invoice-details {
   margin-bottom: 2rem;
-  border-radius: 10px;
+  border-radius: var(--border-radius-sm);
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
@@ -141,6 +166,7 @@
   align-items: center;
   transition: var(--transition);
   border-bottom: 1px solid var(--light-gray);
+  background: var(--white);
 }
 
 .detail-row:last-child {
@@ -148,9 +174,12 @@
 }
 
 .detail-row.header {
-  background: var(--light);
-  font-weight: bold;
+  background: var(--primary-lighter);
+  font-weight: 600;
   color: var(--primary);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
 }
 
 .detail-row:not(.header):hover {
@@ -160,22 +189,33 @@
 
 .product-name {
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.product-thumbnail {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .item-total {
-  font-weight: bold;
+  font-weight: 600;
   color: var(--primary);
 }
 
 .total-row {
   display: flex;
   justify-content: space-between;
-  padding: 1.5rem 1rem;
-  background: var(--light);
+  padding: 1.5rem;
+  background: var(--primary-lighter);
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 600;
   margin-top: 1rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   animation: pulse 2s infinite;
 }
 
@@ -190,7 +230,7 @@
   font-size: 1.4rem;
 }
 
-/* ===== Action Buttons ===== */
+/* Action Buttons */
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -200,251 +240,212 @@
 }
 
 .action-btn {
-  display: inline-block;
-  padding: 10px 20px;
-  margin: 10px;
-  font-size: 16px;
-  color: #fff;
-  background-color: #5a2d82;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-.action-btn:hover {
-  background-color: #7b48a8;
-}
-
-.download-btn {
-  background-color: #4caf50;
-}
-
-.save-btn {
-  background: var(--accent);
-  color: var(--dark);
-}
-
-.save-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.payment-btn {
-  background-color: #ff9800;
-}
-
-.qr-btn {
-  background: var(--secondary);
-  color: var(--white);
-}
-
-.sms-btn {
-  background: #4CAF50;
-  color: var(--white);
-}
-
-.razorpay-btn {
-  background-color: #3399cc;
-}
-
-.razorpay-btn:hover {
-  background-color: #287aa9;
-}
-
-/* ===== QR Section ===== */
-.qr-section {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: var(--light);
-  border-radius: 10px;
-  text-align: center;
-  animation: fadeIn 0.6s ease-out;
-}
-
-.qr-title {
-  color: var(--primary);
-  margin-bottom: 1rem;
-}
-
-.qr-code-container {
-  padding: 1rem;
-  background: var(--white);
-  border-radius: 8px;
-  display: inline-block;
-  margin: 0 auto;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.upi-id {
-  margin-top: 1rem;
-  font-family: monospace;
-  background: var(--white);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-/* ===== SMS Section ===== */
-.sms-section {
-  margin-top: 2rem;
-  animation: fadeIn 0.6s ease-out;
-}
-
-.sms-input-group {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.sms-input {
-  flex: 1;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--light-gray);
-  border-radius: 50px;
-  font-size: 1rem;
-  transition: var(--transition);
-}
-
-.sms-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(90, 45, 130, 0.2);
-}
-
-.send-sms-btn {
   padding: 0.8rem 1.5rem;
-  background: #4CAF50;
-  color: var(--white);
   border: none;
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.send-sms-btn:hover {
+.download-btn {
+  background: var(--success);
+  color: var(--white);
+}
+
+.download-btn:hover {
   background: #3e8e41;
-  transform: translateY(-2px);
 }
 
-/* ===== Order Success Animation ===== */
+.razorpay-btn {
+  background: #3399cc;
+  color: var(--white);
+}
+
+.razorpay-btn:hover {
+  background: #287aa9;
+}
+
+.payment-btn {
+  background: var(--accent);
+  color: var(--dark);
+}
+
+.payment-btn:hover {
+  background: #ffc233;
+}
+
+/* Order Success */
 .order-success {
   text-align: center;
   margin-top: 2rem;
-  animation: fadeIn 0.6s ease-out;
+  padding: 2rem;
+  background: var(--white);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow);
 }
 
 .success-icon {
   font-size: 3rem;
-  color: #4caf50;
-  animation: scaleUp 0.6s ease-out;
+  color: var(--success);
+  margin-bottom: 1rem;
+  display: inline-block;
 }
 
 .order-success p {
   font-size: 1.2rem;
-  color: #4caf50;
+  color: var(--success);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.success-loader {
   margin-top: 1rem;
 }
 
-@keyframes scaleUp {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
+.loader-circle {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(76, 175, 80, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--success);
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
 }
 
-/* ===== Animations ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes spin {
+  100% { transform: rotate(360deg); }
 }
 
-/* ===== Popup Container ===== */
-.popup-container {
+/* Popup Styles */
+.popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.popup-container {
+  width: 90%;
+  max-width: 450px;
 }
 
 .popup {
-  background: #fff;
+  background: var(--white);
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 400px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .popup h3 {
-  margin-bottom: 1rem;
   color: var(--primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.5rem;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-weight: 500;
+  color: var(--dark);
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 0.8rem;
+  padding: 0.8rem 1rem;
   border: 1px solid var(--light-gray);
-  border-radius: 5px;
+  border-radius: var(--border-radius-sm);
+  font-family: inherit;
   font-size: 1rem;
+  transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(90, 45, 130, 0.1);
 }
 
 .form-group textarea {
-  resize: none;
-  height: 80px;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .submit-btn {
+  flex: 1;
   background: var(--primary);
-  color: #fff;
-  padding: 0.8rem 1.5rem;
+  color: white;
   border: none;
-  border-radius: 5px;
+  padding: 0.8rem;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
   cursor: pointer;
-  margin-right: 1rem;
+  transition: var(--transition);
+}
+
+.submit-btn:hover {
+  background: var(--primary-light);
 }
 
 .cancel-btn {
-  background: var(--gray);
-  color: #fff;
-  padding: 0.8rem 1.5rem;
+  flex: 1;
+  background: var(--light-gray);
+  color: var(--dark);
   border: none;
-  border-radius: 5px;
+  padding: 0.8rem;
+  border-radius: var(--border-radius-sm);
+  font-weight: 600;
   cursor: pointer;
+  transition: var(--transition);
 }
 
-/* ===== Responsive Design ===== */
+.cancel-btn:hover {
+  background: #d0d0d0;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .invoice-container {
-    margin: 15px;
+    margin: 1rem;
     border-radius: 12px;
+  }
+
+  .invoice-header {
+    padding: 1.5rem;
+  }
+
+  .invoice-title {
+    font-size: 1.8rem;
+  }
+
+  .store-name {
+    font-size: 1.3rem;
   }
 
   .detail-row {
@@ -460,35 +461,49 @@
   .action-btn {
     width: 100%;
   }
-
-  .sms-input-group {
-    flex-direction: column;
-  }
 }
 
 @media (max-width: 480px) {
   .invoice-header {
-    padding: 1.5rem;
+    padding: 1.2rem;
   }
 
   .invoice-title {
-    font-size: 1.8rem;
-  }
-
-  .store-name {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
 
   .detail-row {
     grid-template-columns: 1.5fr 1fr 0.5fr 1fr;
     font-size: 0.8rem;
+    padding: 0.6rem;
+    gap: 0.5rem;
+  }
+
+  .product-name {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .product-thumbnail {
+    width: 30px;
+    height: 30px;
   }
 
   .total-row {
     font-size: 1rem;
+    padding: 1rem;
   }
 
   .total-amount {
     font-size: 1.2rem;
+  }
+
+  .popup {
+    padding: 1.5rem;
+  }
+
+  .popup-buttons {
+    flex-direction: column;
   }
 }

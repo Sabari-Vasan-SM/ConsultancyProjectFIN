@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "./Home.css";
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const categories = [
     { name: "Snacks", image: "https://images-eu.ssl-images-amazon.com/images/G/31/img18/Fresh/SBCTILES/UPDATED/Snacks__biscuits.jpg" },
     { name: "Masalas", image: "https://images-eu.ssl-images-amazon.com/images/G/31/img18/Fresh/SBCTILES/UPDATED/Masala_sugar__spices.jpg" },
@@ -33,6 +45,10 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [slides.length]);
 
+  const handleShopNow = () => {
+    navigate("/products"); // Navigate to the Products page
+  };
+
   return (
     <div className="home-container">
       {/* Hero Section */}
@@ -44,9 +60,11 @@ const Home = () => {
           <p className="hero-description">
             Your one-stop destination for all daily needs with quality products at affordable prices.
           </p>
-          <button className="hero-button">Shop Now</button>
+          <button className="hero-button" onClick={handleShopNow}>
+            Shop Now
+          </button>
         </div>
-        <div className="hero-image"></div>
+        {!isMobile && <div className="hero-image"></div>}
       </section>
 
       {/* Carousel Section */}
