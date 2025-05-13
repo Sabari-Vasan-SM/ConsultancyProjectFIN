@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState} from 'react';
 import { CartContext } from '../context/CartContext';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -13,7 +13,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Invoice = () => {
   const { cart } = useContext(CartContext);
-  const [isVisible, setIsVisible] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [deliveryDetails, setDeliveryDetails] = useState({
     name: '',
@@ -22,10 +21,6 @@ const Invoice = () => {
   });
   const [orderPlaced, setOrderPlaced] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   const totalAmount = cart.reduce((total, item) => {
     const qty = Number(item.quantity) || 1;
