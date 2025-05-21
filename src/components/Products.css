@@ -1,5 +1,3 @@
-/* Products.css */
-
 :root {
   --primary: #5a2d82;
   --primary-light: #7b48a8;
@@ -159,20 +157,27 @@
   position: relative;
   height: 200px;
   overflow: hidden;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .product-image {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  background: var(--light);
+  transition: transform 0.3s ease;
   padding: 1rem;
-  transition: var(--transition);
-  cursor: pointer;
 }
 
 .product-card:hover .product-image {
   transform: scale(1.05);
+}
+
+.default-product-img {
+  width: 80%;
+  opacity: 0.7;
 }
 
 /* Stock Status Badges */
@@ -187,27 +192,6 @@
   font-size: 0.75rem;
   font-weight: bold;
   z-index: 2;
-}
-
-.out-of-stock-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-}
-
-.out-of-stock-overlay span {
-  background: var(--secondary);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: bold;
 }
 
 .product-info {
@@ -340,7 +324,7 @@
 .modal-product-image {
   width: 100%;
   height: 300px;
-  background: var(--light);
+  background: #f8f8f8;
   display: flex;
   justify-content: center;
   align-items: center;

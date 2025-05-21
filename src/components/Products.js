@@ -5,8 +5,15 @@ import { createClient } from '@supabase/supabase-js';
 
 // Supabase config
 const supabaseUrl = 'https://cslnkpnxwqahipwrjqna.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzbG5rcG54d3FhaGlwd3JqcW5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MzAxNDksImV4cCI6MjA1NTIwNjE0OX0.jqJ9wbyVFx09RvlNXnLZipCzFvjY2RTfcbO4XoiTfU8'; // Replace with your full anon key
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzbG5rcG54d3FhaGlwd3JqcW5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MzAxNDksImV4cCI6MjA1NTIwNjE0OX0.jqJ9wbyVFx09RvlNXnLZipCzFvjY2RTfcbO4XoiTfU8';
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Utility function to handle image URLs
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return '/default-product.png';
+  if (imagePath.startsWith('http')) return imagePath;
+  return `${supabaseUrl}/storage/v1/object/public/products/${imagePath}`;
+};
 
 const Products = () => {
   const { addToCart } = useContext(CartContext);
@@ -19,7 +26,7 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ✅ Fetch products and sanitize data
+  // Fetch products and sanitize data
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -35,6 +42,7 @@ const Products = () => {
           ...product,
           price: Number(product.price),
           quantity: Number(product.quantity),
+          image_url: product.image_url || null
         }));
 
         setProductsList(sanitizedData);
@@ -62,6 +70,7 @@ const Products = () => {
                       ...payload.new,
                       price: Number(payload.new.price),
                       quantity: Number(payload.new.quantity),
+                      image_url: payload.new.image_url || null
                     }
                   : p
               )
@@ -76,7 +85,7 @@ const Products = () => {
     };
   }, []);
 
-  // ✅ Add to cart with numeric values
+  // Add to cart with numeric values
   const handleAddToCart = async (product) => {
     try {
       if (quantity > product.quantity) {
@@ -212,10 +221,14 @@ const Products = () => {
             <div key={product.id} className="product-card">
               <div className="product-image-container">
                 <img
-                  src={product.image}
+                  src={getImageUrl(product.image_url)}
                   alt={product.name}
                   className="product-image"
                   onClick={() => setSelectedProduct(product)}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/default-product.png';
+                  }}
                 />
                 {product.quantity <= 5 && (
                   <span className="low-stock-badge">
@@ -250,7 +263,14 @@ const Products = () => {
             </button>
 
             <div className="modal-product-image">
-              <img src={selectedProduct.image} alt={selectedProduct.name} />
+              <img 
+                src={getImageUrl(selectedProduct.image_url)} 
+                alt={selectedProduct.name}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/default-product.png';
+                }}
+              />
               {selectedProduct.quantity <= 5 && (
                 <span className="low-stock-badge">
                   {selectedProduct.quantity === 0 ? 'Out of Stock' : `Only ${selectedProduct.quantity} left`}

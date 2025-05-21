@@ -1,10 +1,11 @@
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import { CartContext } from '../context/CartContext';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useNavigate } from 'react-router-dom';
 import { createClient } from '@supabase/supabase-js';
 import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
 import './Invoice.css';
 
 const supabaseUrl = 'https://cslnkpnxwqahipwrjqna.supabase.co';
@@ -20,6 +21,7 @@ const Invoice = () => {
     address: '',
   });
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [smsStatus, setSmsStatus] = useState(null);
   const navigate = useNavigate();
 
   const totalAmount = cart.reduce((total, item) => {
@@ -107,12 +109,74 @@ const Invoice = () => {
     setShowPopup(true);
   };
 
+  const sendSMS = async (phoneNumber) => {
+    const accountSid = 'ACd59bf4341b8679f7c82327f777aee5be';
+    const authToken = 'cb12fc08883c3e65198ada3600d16673';
+    const from = '+18149292475';
+    
+    // Function to truncate text with ellipsis if needed
+    const truncate = (text, maxLength) => {
+      return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+    };
+
+    // Create compact product list (max 3 items shown)
+    let productsText = '';
+    const itemsToShow = Math.min(cart.length, 3);
+    for (let i = 0; i < itemsToShow; i++) {
+      const item = cart[i];
+      const qty = Number(item.quantity) || 1;
+      const shortName = truncate(item.name, 12);
+      productsText += `${shortName} ₹${item.price}x${qty}=₹${item.price * qty}\n`;
+    }
+
+    // Add remaining items count if any
+    if (cart.length > 3) {
+      productsText += `+${cart.length - 3} more items\n`;
+    }
+
+    // Create compact address (first line only)
+    const addressFirstLine = deliveryDetails.address.split('\n')[0];
+    const shortAddress = truncate(addressFirstLine, 25);
+
+    // Build message within 150 chars limit
+    let messageBody = `Hi ${truncate(deliveryDetails.name, 10)},\nOrd:\n${productsText}`;
+    messageBody += `Tot: ₹${totalAmount}\n${shortAddress}\nVSS`;
+
+    // Final truncation if needed
+    messageBody = truncate(messageBody, 150);
+
+    try {
+      const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+      const data = new URLSearchParams();
+      data.append('To', phoneNumber);
+      data.append('From', from);
+      data.append('Body', messageBody);
+
+      await axios.post(url, data, {
+        auth: {
+          username: accountSid,
+          password: authToken
+        },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+      
+      setSmsStatus('success');
+      console.log('SMS sent successfully');
+    } catch (error) {
+      setSmsStatus('error');
+      console.error('Error sending SMS:', error.response ? error.response.data : error.message);
+    }
+  };
+
   const handlePopupSubmit = async (e) => {
     e.preventDefault();
     setOrderPlaced(true);
     setShowPopup(false);
 
     try {
+      // Save order to Supabase
       const { data, error } = await supabase.from('orders').insert([
         {
           name: deliveryDetails.name,
@@ -129,6 +193,10 @@ const Invoice = () => {
       } else {
         console.log('Order saved:', data);
       }
+
+      // Send SMS to customer
+      await sendSMS(`+91${deliveryDetails.phone}`);
+
     } catch (err) {
       console.error('Unexpected error:', err);
     }
@@ -281,6 +349,12 @@ const Invoice = () => {
             >
               <div className="success-icon">✔</div>
               <p>Your order has been placed successfully!</p>
+              {smsStatus === 'success' && (
+                <p className="sms-success">SMS confirmation sent to your phone.</p>
+              )}
+              {smsStatus === 'error' && (
+                <p className="sms-error">Order placed but SMS failed to send.</p>
+              )}
               <div className="success-loader">
                 <div className="loader-circle"></div>
               </div>
@@ -318,10 +392,12 @@ const Invoice = () => {
                   <div className="form-group">
                     <label>Phone</label>
                     <input
-                      type="text"
+                      type="tel"
                       value={deliveryDetails.phone}
                       onChange={(e) => setDeliveryDetails({ ...deliveryDetails, phone: e.target.value })}
                       required
+                      pattern="[0-9]{10}"
+                      title="Please enter a 10-digit phone number"
                     />
                   </div>
                   <div className="form-group">

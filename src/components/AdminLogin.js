@@ -8,18 +8,50 @@ const CustomerLogin = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginType, setLoginType] = useState("customer");
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState("");
   const navigate = useNavigate();
+
+  const validatePassword = (password) => {
+    const hasCapital = /[A-Z]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const isLengthValid = password.length <= 15;
+    return hasCapital && hasSpecial && isLengthValid;
+  };
+
+  const checkPasswordStrength = (password) => {
+    if (password.length === 0) return "";
+    if (password.length < 6) return "Weak";
+
+    const hasCapital = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (hasCapital && hasNumber && hasSpecial && password.length >= 8) {
+      return "Strong";
+    } else if ((hasCapital || hasSpecial) && password.length >= 6) {
+      return "Medium";
+    }
+    return "Weak";
+  };
 
   const handleLogin = (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    // Simulate API call with timeout for customer login
+    if (!validatePassword(password)) {
+      setError(
+        "Password must have at least one capital letter, one special character, and be no longer than 15 characters."
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    // Simulate API login
     setTimeout(() => {
-      if (loginType === "customer" && email === "user@gmail.com" && password === "user") {
+      if (loginType === "customer") {
         navigate("/home");
-      } else if (loginType === "customer") {
-        setError("Invalid Email or Password");
       }
       setIsLoading(false);
     }, 1000);
@@ -45,7 +77,7 @@ const CustomerLogin = () => {
             className={`toggle-btn ${loginType === "customer" ? "active" : ""}`}
             onClick={() => {
               setLoginType("customer");
-              setError(""); // Clear error
+              setError("");
             }}
           >
             Customer
@@ -54,7 +86,7 @@ const CustomerLogin = () => {
             className={`toggle-btn ${loginType === "stock" ? "active" : ""}`}
             onClick={() => {
               setLoginType("stock");
-              setError(""); // Clear error
+              setError("");
             }}
           >
             Stock Management
@@ -62,7 +94,7 @@ const CustomerLogin = () => {
           <div className={`toggle-indicator ${loginType}`}></div>
         </div>
 
-        {/* Form for Customer Login */}
+        {/* Customer Login Form */}
         {loginType === "customer" && (
           <form className="login-form" onSubmit={handleLogin}>
             <div className="input-group">
@@ -77,17 +109,33 @@ const CustomerLogin = () => {
               <span className="input-highlight"></span>
             </div>
 
-            <div className="input-group">
+            <div className="input-group password-group">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder=" "
                 className="login-input"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setPasswordStrength(checkPasswordStrength(e.target.value));
+                }}
               />
               <label className="input-label">Password</label>
               <span className="input-highlight"></span>
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🔒" : "🔓"}
+              </button>
             </div>
+
+            {password && (
+              <div className={`password-strength ${passwordStrength.toLowerCase()}`}>
+                Strength: {passwordStrength}
+              </div>
+            )}
 
             {error && (
               <div className="error-message" key={error}>
@@ -105,7 +153,7 @@ const CustomerLogin = () => {
           </form>
         )}
 
-        {/* Button for Stock Management */}
+        {/* Stock Management Redirect */}
         {loginType === "stock" && (
           <div className="stock-management">
             <button onClick={handleRedirect} className="redirect-button">
