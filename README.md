@@ -5,7 +5,12 @@ Welcome to the Smart Retail Management System — an all-in-one digital solution
 🔗 Deployment:
 
 https://velavanstores1.netlify.app/
+
+
 bit.ly/velavanstores
+
+
+
 
 🧰 Tech Stack & Integrations
 e
@@ -15,6 +20,9 @@ e
 📞 Twilio	SMS notifications and order updates
 💳 Razorpay	Online payment processing
 
+
+
+
 🔐 Login Portal
 
 Users securely log in to access their respective dashboards:
@@ -22,6 +30,9 @@ Users securely log in to access their respective dashboards:
 👤 Customers
 
 🏪 Admins
+
+
+
 
 👥 Customer Portal
 
@@ -36,6 +47,9 @@ A powerful and easy-to-use interface for shoppers:
 💳 Payment – Secure Razorpay integration for smooth transactions
 
 🚚 Delivery – Track your orders with status updates
+
+
+
 
 🧑‍💼 Admin Portal
 
@@ -53,6 +67,9 @@ Control and monitor operations efficiently:
 
 🧾 Offline Billing – Bill non-online orders quickly
 
+
+
+
 🧠 Key Features
 
 🔐 Secure authentication for both users and admins
@@ -65,9 +82,10 @@ Control and monitor operations efficiently:
 
 ✉️ SMS Notifications for order status updates
 
+
+
+
 🤝 Contributions Welcome!
 Feel free to fork this repo, create a new branch, and submit a pull request. Help us improve the smart retail experience! 💪
 
-📊 Reports – View charts and analytics for sales and performance
 
-📲 Process Online Orders – Manage and fulfill incoming orders
