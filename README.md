@@ -12,8 +12,8 @@ bit.ly/velavanstores
 
 
 
-🧰 Tech Stack & Integrations
-e
+🧰 Tech Stack & Integrations:
+
 ⚛️ React	Frontend UI framework
 🔗 Axios	Handling API requests
 🛠️ Supabase	Authentication and database backend
@@ -23,7 +23,7 @@ e
 
 
 
-🔐 Login Portal
+🔐 Login Portal:
 
 Users securely log in to access their respective dashboards:
 
@@ -34,7 +34,7 @@ Users securely log in to access their respective dashboards:
 
 
 
-👥 Customer Portal
+👥 Customer Portal:
 
 A powerful and easy-to-use interface for shoppers:
 
@@ -51,7 +51,7 @@ A powerful and easy-to-use interface for shoppers:
 
 
 
-🧑‍💼 Admin Portal
+🧑‍💼 Admin Portal:
 
 Control and monitor operations efficiently:
 
@@ -70,7 +70,7 @@ Control and monitor operations efficiently:
 
 
 
-🧠 Key Features
+🧠 Key Features:
 
 🔐 Secure authentication for both users and admins
 
